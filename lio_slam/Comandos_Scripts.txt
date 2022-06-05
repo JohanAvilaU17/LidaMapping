@@ -1,0 +1,33 @@
+- github
+	https://github.com/TixiaoShan/LIO-SAM
+
+	- Sample datasets
+		Configuración de rosbag de prueba
+	
+- Error 
+	- catkin_make
+		https://github.com/TixiaoShan/LIO-SAM/issues/314
+		https://github.com/TixiaoShan/LIO-SAM/issues/206
+	- For the full build of catkin_make a minimum RAM usage of 9GB
+
+- Rosbag
+	https://drive.google.com/drive/folders/1gJHwfdHCRdjP7vuT556pv8atqrCJPbUq?usp=sharing
+	 
+	rosbag play campus_small_dataset.bag -r 3
+
+- rostopic
+    rostopic list
+    rostopic info " topico "
+
+- Rosrun
+    source devel/setup.bash
+    roslaunch lio_sam run.launch
+- nodos
+	rosrun rqt_graph rqt_graph 
+
+- tf 
+	rosrun rqt_tf_tree rqt_tf_tree
+	
+	rosrun tf tf_echo base_link velodyne
+	rosrun tf tf_echo base_link navsat_link 
+	rosrun tf tf_echo map velodyne 

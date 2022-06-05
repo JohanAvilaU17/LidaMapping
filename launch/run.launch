@@ -1,0 +1,9 @@
+<launch>
+    <arg name="project" default="apms_slam" />
+    <!--- Robot State TF -->
+    <include file="$(find apms_slam)/launch/include/module_robot_state_publisher.launch" />
+    <!--- Nodes -->
+    <include file="$(find apms_slam)/launch/include/module_init_nodes.launch" />
+    <!--- Run Rviz-->
+    <include file="$(find apms_slam)/launch/include/module_rviz.launch" />
+</launch>

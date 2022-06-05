@@ -1,0 +1,8 @@
+<launch>
+    <arg name="project" default="apms_slam" />
+    
+    <node pkg="$(arg project)" type="repost.py" name="listener" output="screen" respawn="true" />
+    <node pkg="$(arg project)" type="odometry2BaseLink.py" name="$(arg project)_odometry2BaseLink" output="screen" respawn="true" />
+    <node pkg="$(arg project)" type="velo2Map.py" name="$(arg project)_velo2Map" output="screen" respawn="true" />
+
+</launch>

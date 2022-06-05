@@ -1,0 +1,13 @@
+digraph G {
+"base_link" -> "chassis_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1646947697.861 sec old)\nBuffer length: 0.000 sec\n"];
+"odom" -> "base_link"[label="Broadcaster: /lio_sam_imuPreintegration\nAverage rate: 500.099 Hz\nMost recent transform: 1573567291.986 ( 73380405.875 sec old)\nBuffer length: 9.998 sec\n"];
+"chassis_link" -> "imu_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1646947697.861 sec old)\nBuffer length: 0.000 sec\n"];
+"chassis_link" -> "navsat_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1646947697.861 sec old)\nBuffer length: 0.000 sec\n"];
+"chassis_link" -> "velodyne"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1646947697.861 sec old)\nBuffer length: 0.000 sec\n"];
+"map" -> "odom"[label="Broadcaster: /lio_sam_imuPreintegration\nAverage rate: 500.099 Hz\nMost recent transform: 1573567291.986 ( 73380405.875 sec old)\nBuffer length: 9.998 sec\n"];
+"odom" -> "lidar_link"[label="Broadcaster: /lio_sam_mapOptmization\nAverage rate: 4.207 Hz\nMost recent transform: 1573567291.162 ( 73380406.699 sec old)\nBuffer length: 9.984 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1646947697.861"[ shape=plaintext ] ;
+ }->"map";
+}

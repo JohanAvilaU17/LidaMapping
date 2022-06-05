@@ -1,0 +1,50 @@
+- Rosbag 
+    rosbag play -l 04.bag
+
+- rostopic
+    rostopic list
+    rostopic info " topico "
+
+- rosnode list
+
+- workspace_catkin 
+    catkin_make
+    catkin_create_pkg tf_slam tf roscpp rospy turtlesim std_msgs geometry_msgs sensor_msgs
+    touch " script.py "
+    sudo chmod u+x " script.py "
+
+- ssh -Y johanp@172.17.100.6
+    -Y para insterfaz grafica
+    
+    scp -r johanp@172.17.100.tf_tfs_tmp:pwd-workstation pwd-yo
+
+- ls -R
+    mkdir
+    mv "cambiar nombre" "nuevo nombre"
+    rm "eliminar archivos" 
+
+- Rosrun
+    source devel/setup.bash
+    roslaunch apms_slam run.launch
+    rosrun apms_slam publisher_map_kitti.py
+
+    x rojo 
+    y verde
+    z azul 
+
+- tf
+    http://wiki.ros.org/tf/Tutorials/Introduction%20to%20tf
+
+    rosrun tf tf_echo base_link world
+    rosrun tf tf_echo velo_link world
+    rosrun tf tf_monitor base_link world
+    rosrun rqt_tf_tree rqt_tf_tree
+    rosrun tf view_frames
+    rosrun rqt_graph rqt_graph 
+
+
+    https://github.com/methylDragon/pcl-ros-tutorial/blob/master/PCL%20Reference%20with%20ROS.md
+    https://www.programcreek.com/python/example/120920/sensor_msgs.point_cloud2.create_cloud_xyz32
+
+
+    <node pkg="$(arg project)" type="velo2MapGlobal.py" name="$(arg project)_velo2MapGlobal" output="screen" respawn="true" />
