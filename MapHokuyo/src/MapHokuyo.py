@@ -2,16 +2,10 @@
 
 import rospy
 import rospkg
-import tf
-from std_msgs.msg import Header
 from std_msgs.msg import Int16
-from sensor_msgs import point_cloud2
 from sensor_msgs.msg import MultiEchoLaserScan
-from sensor_msgs.msg import PointCloud2
-from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import PointStamped
 
-import time
 import yaml
 import cv2
 import numpy as np
@@ -24,11 +18,7 @@ class MapHokuyo:
         self.sub_lidar = None
         self.sub_motor = None
 
-        self.pub_map_echo0 = None
-        self.pub_map_echo1 = None
-        self.pub_map_echo2 = None
-
-        self.flag_Echo = False
+        self.flag_Lidar = False
 
         self.pub_lidar_flag = None
         self.pub_motor_flag = None
@@ -40,6 +30,7 @@ class MapHokuyo:
             params = yaml.load(f, Loader=yaml.FullLoader)["map_hokuyo"]
 
         self.coordinate_xyz = params["coordinate"]["xyz"]
+        self.coordinate_rpy = params["coordinate"]["rpy"]
 
         self.map_echo0 = o3d.geometry.PointCloud()
         self.map_echo1 = o3d.geometry.PointCloud()
@@ -48,9 +39,6 @@ class MapHokuyo:
         self.intensities_0 = o3d.utility.DoubleVector()
         self.intensities_1 = o3d.utility.DoubleVector()
         self.intensities_2 = o3d.utility.DoubleVector()
-
-        self.map_header = Header()
-        self.map_header.frame_id = params["frames"]["world"]
 
     def setting_subscriber(self):
         self.sub_lidar = rospy.Subscriber(
@@ -66,21 +54,6 @@ class MapHokuyo:
             queue_size=100)
 
     def setting_publisher(self):
-        self.pub_map_echo0 = rospy.Publisher(
-            "/map_hokuyo/echo0/pointcloud",
-            PointCloud2,
-            queue_size=10)
-
-        self.pub_map_echo1 = rospy.Publisher(
-            "/map_hokuyo/echo1/pointcloud",
-            PointCloud2,
-            queue_size=10)
-
-        self.pub_map_echo2 = rospy.Publisher(
-            "/map_hokuyo/echo2/pointcloud",
-            PointCloud2,
-            queue_size=10)
-
         self.pub_lidar_flag = rospy.Publisher(
             "map_hokuyo/lidar/flag",
             Int16)
@@ -92,14 +65,14 @@ class MapHokuyo:
     def scanning(self, multiEcho_ros):
         self.pub_lidar_flag.publish(1)
         self.multiEcho_ros = multiEcho_ros
-        self.flag_Echo = True
+        self.flag_Lidar = True
         self.pub_lidar_flag.publish(0)
 
     def mapping(self, pose_motor_ros):
         self.pub_motor_flag.publish(1)
-        while self.flag_Echo == False:
+        while self.flag_Lidar == False:
             pass
-        self.flag_Echo = False
+        self.flag_Lidar = False
         multiEcho_ros = self.multiEcho_ros
 
         range_Lidar_ros = multiEcho_ros.ranges
@@ -149,7 +122,6 @@ class MapHokuyo:
 
         mp_lidar = np.eye(4)
         mp_lidar[:3, :3] = cv2.Rodrigues(rvec)[0]
-        mp_lidar[:3, 3] = self.coordinate_xyz
 
         pcd_echo0.transform(mp_lidar)
         pcd_echo1.transform(mp_lidar)
@@ -163,25 +135,23 @@ class MapHokuyo:
         self.intensities_1.extend(intensities_1)
         self.intensities_2.extend(intensities_2)
 
-        # map_echo0_numpy = np.asarray(self.map_echo0.points)
-        # map_echo1_numpy = np.asarray(self.map_echo1.points)
-        # map_echo2_numpy = np.asarray(self.map_echo2.points)
-
-        # self.pub_map_echo0.publish(
-        #     point_cloud2.create_cloud_xyz32(self.map_header, map_echo0_numpy))
-
-        # self.pub_map_echo1.publish(
-        #     point_cloud2.create_cloud_xyz32(self.map_header, map_echo1_numpy))
-
-        # self.pub_map_echo2.publish(
-        #     point_cloud2.create_cloud_xyz32(self.map_header, map_echo2_numpy))
-
         self.pub_motor_flag.publish(0)
 
+    def projectCoordinates(self):
+        print("projectCoordinates")
+
+        rvec = np.radians(self.coordinate_rpy)
+
+        mp_lidar = np.eye(4)
+        mp_lidar[:3, :3] = cv2.Rodrigues(rvec)[0]
+        mp_lidar[:3, 3] = self.coordinate_xyz
+
+        self.map_echo0.transform(mp_lidar)
+        self.map_echo1.transform(mp_lidar)
+        self.map_echo2.transform(mp_lidar)
+
     def save_mapa(self):
-        print("")
         print("save_mapa")
-        print("")
 
         r = rospkg.RosPack()
         pwd_src = r.get_path('map_hokuyo')
@@ -192,14 +162,6 @@ class MapHokuyo:
 
         for idx in range(0, N-1):
             file_base += pwd_src[idx]+"/"
-
-        # file_echo0 = file_base + "map_echo0.pcd"
-        # file_echo1 = file_base + "map_echo1.pcd"
-        # file_echo2 = file_base + "map_echo2.pcd"
-
-        # o3d.io.write_point_cloud(file_echo0, self.map_echo0)
-        # o3d.io.write_point_cloud(file_echo1, self.map_echo1)
-        # o3d.io.write_point_cloud(file_echo2, self.map_echo2)
 
         file = file_base + "map_echoes.txt"
         with open(file, 'w') as f:
@@ -230,4 +192,6 @@ if __name__ == '__main__':
     rospy.loginfo("\033[1;32m-> Map.\033[0m")
     rospy.spin()
 
+    print("")
+    map_hokuyo.projectCoordinates()
     map_hokuyo.save_mapa()

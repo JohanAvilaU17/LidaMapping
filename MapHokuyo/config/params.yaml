@@ -1,9 +1,4 @@
 map_hokuyo:
-  frames:
-    world: "world"
-    motor: "dynamixel"
-    lidar: "laser"
-
   origins:
     world2motor:
       xyz: [0, 0, 1.25]
@@ -12,4 +7,9 @@ map_hokuyo:
       xyz: [0, 0, 0.05]
 
   coordinate:
-    xyz: [0, 0, 0]
+    xyz: [-12.127, 0.4, -0.6099]
+    rpy: [0, 0, 180]
+
+    # Roll = X
+    # Pitch = Y
+    # Yaw = Z

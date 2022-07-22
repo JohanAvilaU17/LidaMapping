@@ -30,10 +30,11 @@
     roslaunch map_hokuyo run.launch
     roscore
     rosrun dynamixel_mx dynamixel_mx.py
+    rosrun map_hokuyo MapHokuyo.py
     rosrun urg_node urg_node _ip_address:="192.168.0.10" _publish_multiecho:="true"
     rosbag record -a
 
-    rosrun map_hokuyo MapHokuyo.py
+    
 
     rosrun rqt_topic rqt_topic
     rosrun rqt_plot rqt_plot
